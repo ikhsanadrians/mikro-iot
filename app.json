@@ -1,0 +1,39 @@
+{
+  "expo": {
+    "name": "mikro",
+    "slug": "mikroapp",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icons/mikroAPPsmol.png",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "image": "./assets/icons/mikroAPPsmol.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "updates": {
+      "fallbackToCacheTimeout": 0
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "supportsTablet": true
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#FFFFFF"
+      }
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "bcf34d7a-f2d3-42d2-8853-e01ef0c89137"
+      }
+    },
+    "owner": "adrianikhsandev"
+  }
+}
