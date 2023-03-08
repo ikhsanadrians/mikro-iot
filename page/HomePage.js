@@ -59,9 +59,7 @@ class HomePage extends Component {
       isSwitchOn: [],
       mqttPath: '',
       mqttId: 'id_' + parseInt(Math.random() * 100000),
-      isSnackBarVisible: false,
       isLoadingVisible: false,
-      isErrorConnect: false,
     }
     this.client = null;
     this.handleSwitchToggle = this.handleSwitchToggle.bind(this)
@@ -158,10 +156,11 @@ class HomePage extends Component {
       console.log('onConnect')
       this.client.subscribe('Cikunir/lt2/suhu2/sharp')
       this.setState({ status: 'Connected' });
-      this.setState({isSnackBarVisible:true}) 
+      setTimeout(() => {
+        this.setState({status:''});
+      }, 5000);
     } catch {
       console.log('Failed To Connection!')
-      this.setState({isErrorConnect:true})
     }
   }
 
