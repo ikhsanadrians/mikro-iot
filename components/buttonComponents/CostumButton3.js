@@ -5,7 +5,7 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 export default class CostumButton3 extends React.Component {
     render(){
         return(
-            <TouchableOpacity disabled={this.props.dis == null ? false : this.props.dis } style={styles.CostumButton3}>
+            <TouchableOpacity onPress={this.props.onPress} disabled={this.props.dis == null ? false : this.props.dis } style={styles.CostumButton3}>
                   <MaterialCommunityIcons name="lamp" size={24} color="white" style={styles.icon}/>
             </TouchableOpacity>
         )

@@ -5,7 +5,7 @@ import { View,Text, Component, Touchable, TouchableOpacity ,StyleSheet} from "re
 export default class CostumButton1 extends React.Component {
     render(){
         return(
-            <TouchableOpacity disabled={this.props.dis == null ? false : this.props.dis } style={[styles.CostumButton1,{height:this.props.h,width:this.props.w}]}>
+            <TouchableOpacity onPress={this.props.onPress} disabled={this.props.dis == null ? false : this.props.dis } style={[styles.CostumButton1,{height:this.props.h,width:this.props.w}]}>
                 <Text style={{fontFamily:'Jakarta',color:'white',fontSize:this.props.fs}}>{this.props.btnTitle == null ? "Costum Button 1" : this.props.btnTitle}</Text>
             </TouchableOpacity>
         )

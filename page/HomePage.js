@@ -470,7 +470,7 @@ class HomePage extends Component {
                     <View key={index}>
                       {data[1] == 1 &&
                         <Grid key={index}>
-                          <CostumButton1 btnTitle={data[4]} key={index} onPress={this.sendToTopic.bind(data[2])}>
+                          <CostumButton1 title='test' btnTitle={data[4]} key={index} onPress={this.test.bind(data[2])}>
                           </CostumButton1>
                         </Grid>
 
@@ -511,6 +511,7 @@ class HomePage extends Component {
                           </View>
                         </View>
                       }
+                      <Button title="test" onPress={this.test.bind('hellow')}></Button>
                     </View>
                   )
                 })}
