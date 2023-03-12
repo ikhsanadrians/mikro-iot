@@ -1,11 +1,11 @@
 import { Component } from "react";
-import { StyleSheet, Text, View, TextInput, Button, TouchableOpacity, Modal } from "react-native";
+import { StyleSheet, Text, View, TextInput, Button, TouchableOpacity, Modal,Image} from "react-native";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { MaterialCommunityIcons, FontAwesome, AntDesign, Ionicons, Entypo, Feather } from '@expo/vector-icons';
 import DialogInput from 'react-native-dialog-input';
 import { LinearGradient } from "expo-linear-gradient";
 import HomePage from "./HomePage";
-
+import ProfilePic from '../assets/misc/samplepic.jpg';
 
 class SettingPage extends Component {
   constructor(props) {
@@ -16,6 +16,7 @@ class SettingPage extends Component {
       isDialogVisible: false,
       isDialogProfileVisible: false,
       modalMqtt: false,
+      modalProfileEdit: false,
       mqttUrl: "",
       mqttPort: "",
       mqttTopicPath: "",
@@ -40,9 +41,12 @@ class SettingPage extends Component {
 
     try {
       await AsyncStorage.setItem('username', JSON.stringify(inputToUsername))
+      await this.setState({modalProfileEdit:false})
     } catch {
       return
     }
+    
+
   }
 
 
@@ -76,14 +80,15 @@ class SettingPage extends Component {
 
 
   render() {
-  // console.log(this.props.route.params);
+    
+    console.log(`params setting : ${this.props.route.params}`);
 
     return (
       <View style={styles.container}>
         <Modal visible={this.state.modalMqtt}>
           <View style={styles.modalMqtt}>
             <View style={styles.modalMqttHeader}>
-              <TouchableOpacity onPress={() => this.setState({ modalMqtt: falsze })}>
+              <TouchableOpacity onPress={() => this.setState({ modalMqtt: false })}>
                 <MaterialCommunityIcons name="arrow-left" size={25}></MaterialCommunityIcons>
               </TouchableOpacity>
               <Text style={styles.modalMqttTitle}>Set Up MQTT</Text>
@@ -111,23 +116,42 @@ class SettingPage extends Component {
             </View>
           </View>
         </Modal>
-        <DialogInput isDialogVisible={this.state.isDialogProfileVisible}
-          title={"Set Up Username"}
-          submitInput={(inputUsername) => { this.getDataFromUsernameInput(inputUsername), this.setState({ isDialogProfileVisible: false }) }}
-          submitText={"Set"}
-          closeDialog={() => { this.setState({ isDialogProfileVisible: false }) }}
-          hintInput={"Masukan Username"}
-          dialogStyle={{
-            width: '100%',
-            color: 'red',
-            marginHorizontal: 10,
-            height: 300,
-            borderRadius: 20,
-            justifyContent: 'center',
-            marginHorizontal: 10,
-          }}
-        >
-        </DialogInput>
+        <Modal visible={this.state.modalProfileEdit}>
+        <View style={styles.modalMqtt}>
+            <View style={styles.modalMqttHeader}>
+              <TouchableOpacity onPress={() => this.setState({ modalProfileEdit: false })}>
+                <MaterialCommunityIcons name="arrow-left" size={25}></MaterialCommunityIcons>
+              </TouchableOpacity>
+              <Text style={styles.modalMqttTitle}>Set Up Your Profile</Text>
+        
+            </View>
+            <View style={styles.modalMqttContainer}>
+              <Text style={styles.modalProfileTitle}>
+                 USER CONFIGURATION
+              </Text>
+              <View style={styles.userPictureEdit}>
+                 <View style={styles.userPictureInner}>
+                    <Image source={ProfilePic} style={styles.profilepic}></Image>
+                 </View>
+                 <TouchableOpacity style={styles.edit}>
+                 <Entypo name="pencil" size={17} color={'white'}></Entypo>
+                 </TouchableOpacity>
+              </View>
+              <View style={styles.userInputName}>
+              <TextInput onChangeText={(paramUsername) => this.setState({ mqttUsername: paramUsername })} placeholder="Your Mqtt Username" style={styles.modalMqttInputUrl}>
+              </TextInput>
+              <TouchableOpacity onPress={()=>this.getDataFromUsernameInput(this.state.mqttUsername)}>
+                <LinearGradient colors={["#2380bf", "#239ffb", "#55cfdb"]} style={styles.modalMqttUpload}>
+                  <Entypo name="save" size={24} color="white" />
+                  <Text style={styles.buttonSetUp}>Save</Text>
+                </LinearGradient>
+              </TouchableOpacity>
+              </View>
+           
+            </View>
+        </View>
+
+        </Modal>
         <View style={styles.title}>
           <Feather name="settings" size={20} color="#787E87" />
           <Text style={styles.setingTitle}>
@@ -135,7 +159,7 @@ class SettingPage extends Component {
           </Text>
         </View>
         <View style={styles.menuList}>
-          <TouchableOpacity onPress={() => this.setState({ isDialogProfileVisible: true })} style={styles.mqttConnect}>
+          <TouchableOpacity onPress={() => this.setState({ modalProfileEdit:true })} style={styles.mqttConnect}>
             <View style={styles.mqttConnectInner}>
               <Entypo name="user" size={24} color="#787E87" />
               <Text style={styles.mqttTitle}>Change Profile User</Text>
@@ -267,6 +291,35 @@ const styles = StyleSheet.create({
     marginVertical: 10,
     color: '#787E87',
     fontFamily: 'Inter'
+  },
+  userPictureEdit: {
+    flex:1,
+  },
+  userPictureInner: {
+     alignSelf:"center",
+     overflow:"hidden",
+     height:90,
+     borderRadius:20,
+     width:90,
+  },
+  userInputName: {
+    flex:4,
+  },
+  modalProfileTitle: {
+    flex:.4,
+  },
+  profilepic:{
+    height:90,
+    width:90,
+  },
+  edit: {
+    position:'absolute',
+    alignSelf:'center',
+    bottom:35,
+    padding:5,
+    backgroundColor:'#239ffb',
+    borderRadius:10,
+    right:120,
   }
 });
 

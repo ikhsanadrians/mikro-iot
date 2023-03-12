@@ -129,9 +129,7 @@ class HomePage extends Component {
       if (await this.state.mqttUrl != '') {
         setTimeout(() => {
           this.client = new Paho.Client(
-     
-  }
-}       this.state.mqttUrl, this.state.mqttPort, this.state.mqttId
+            this.state.mqttUrl, this.state.mqttPort, this.state.mqttId
           )
           this.client.onMessageArrived = this.onMessageArrived;
           this.client.onConnectionLost = this.onConnectionLost;

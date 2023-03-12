@@ -31,6 +31,8 @@ export default function App() {
 
   return (
     <NavigationContainer>
+            <StatusBar backgroundColor="white" />
+
       <Tab.Navigator initialRouteName="Home"
        screenOptions={{
         tabBarHideOnKeyboard:true
@@ -39,7 +41,7 @@ export default function App() {
         <Tab.Screen name="Settings" component={SettingPages}
         options={{
           tabBarIcon: ({ focused, color, size }) => (
-            <Ionicons name="ios-settings-outline" size={24} color="#8C8C8E" />
+            <Ionicons name={focused ? 'ios-settings-sharp' : 'ios-settings-outline'} size={24} color={focused ? '#239ffb' : '#8C8C8E'} />
           ),
           header:() => (
             <CostumHeader/>
@@ -52,7 +54,7 @@ export default function App() {
         component={HomePages}
         options={{
           tabBarIcon: ({ focused, color, size }) => (
-            <Ionicons name="md-home-outline" size={24} color="#8C8C8E" />
+            <Ionicons name={focused ? 'md-home-sharp' : 'md-home-outline'} size={24} color={focused ? '#239ffb' : '#8C8C8E'} />
           ),
           header: () => (
             <CostumHeader/>
@@ -64,7 +66,7 @@ export default function App() {
            <Tab.Screen name="Widget" component={WidgetPages}
         options={{
           tabBarIcon: ({ focused, color, size }) => (
-            <MaterialCommunityIcons name="widgets-outline" size={24} color="#8C8C8E" />
+            <MaterialCommunityIcons name={focused ? 'widgets' : 'widgets-outline'} size={24} color={focused ? '#239ffb' : '#8C8C8E'} />
           ),
           header: () => (
             <CostumHeader/>

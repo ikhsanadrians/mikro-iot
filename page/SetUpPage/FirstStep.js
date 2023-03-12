@@ -22,6 +22,7 @@ class FirstStep extends Component {
           titleBtn: "",
           isInputNull : false,
           isButtonActive: false,
+          isSendIt:false,
       }
    }
 
@@ -65,7 +66,8 @@ class FirstStep extends Component {
      
      let objectedVal = await JSON.stringify(objVal)
      await AsyncStorage.setItem(key,objectedVal)
-     this.props.navigation.navigate('Homepage',{isRefresh:true})
+     this.setState({isSendIt:!this.state.isSendIt});
+     this.props.navigation.navigate('Homepage','first');
     }catch(e){
        console.log(e);
     }
@@ -110,9 +112,14 @@ setToObj = () => {
            onChangeText={(val)=>this.setState({topicName:val})}
            placeholder="Masukan MQTT Topic">
         </TextInput>
+
         <TextInput
            onChangeText={(val)=>this.setState({titleBtn:val})}
            style={[styles.templateInputName,{marginTop:10}]} placeholder="Masukan Title Button"></TextInput>
+                <TextInput
+           onChangeText={(val)=>this.setState({titleBtn:val})}
+           style={[styles.templateInputName,{marginTop:10}]} placeholder="Masukan Message"></TextInput>
+
           <Text style={styles.hintTypeBtn}>Pilih Jenis Button</Text>
           <ScrollView horizontal={true} style={styles.btnOption}>
              <TouchableOpacity onPress={() => this.selectButtonType(1)} style={[styles.grid,{
