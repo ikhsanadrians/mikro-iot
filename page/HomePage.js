@@ -11,6 +11,7 @@ import {
   Button,
   Alert,
   Image,
+  SafeAreaView
 } from 'react-native';
 import {
   Feather,
@@ -56,10 +57,12 @@ class HomePage extends Component {
       cityName: '',
       latitude: '',
       mqttPort: null,
-      isSwitchOn: [],
+      isSwitchOn: false ,
+      isSwitchesOn: {switch1:false,switch2:false,switch3:false},
       mqttPath: '',
       mqttId: 'id_' + parseInt(Math.random() * 100000),
       isLoadingVisible: false,
+      runningRefresh:false,
     }
     this.client = null;
     this.handleSwitchToggle = this.handleSwitchToggle.bind(this)
@@ -76,18 +79,22 @@ class HomePage extends Component {
     }, 1000);
   }
 
-
-
-
-  refreshFromSettingPage = () => {
-    if (this.props.route.params == undefined || this.props.route.params == 'true') {
-      this.setState({ refreshing: true });
+  onRefreshOrigin = () => {
+    this.setState({ refreshing: true }, () => {
       setTimeout(() => {
-        this.setState({ refreshing: false })
-        this.props.route.params = "false";
-      }, 1000)
-    } 
+        this.setState({ refreshing: false });
+      }, 1000);
+    });
   }
+
+
+
+
+  // refreshFromSettingPage = () => {
+  //   if (this.props.route.params == undefined || this.props.route.params == 'true') {
+  //     this.onRefreshOrigin();
+  //   } 
+  // }
 
 
 
@@ -96,14 +103,35 @@ class HomePage extends Component {
     this.clientConnect();
     this.getLocation();
   }
+   
 
+  // componentDidUpdate(prevProps){
+  //   if (prevProps.route.params != this.props.route.params ) {
+  //     this.setState({ refreshing: true,runningRefresh:true});
+  //     this.loadData();
+  //     setTimeout(() => { 
+  //       this.setState({ refreshing: false });
+  //       this.setState({ runningRefresh:false });
+  //     }, 1000);
+  //   }
+  //   console.log(prevProps.route.params);
+  // } 
+  
 
+  refreshFromFirstPage = () => {
+    if(this.props.route.params == 'first'){
+        this.onRefresh();
+  }
+}
+  
   clientConnect = async () => {
     try {
       if (await this.state.mqttUrl != '') {
         setTimeout(() => {
           this.client = new Paho.Client(
-            this.state.mqttUrl, this.state.mqttPort, this.state.mqttId
+     
+  }
+}       this.state.mqttUrl, this.state.mqttPort, this.state.mqttId
           )
           this.client.onMessageArrived = this.onMessageArrived;
           this.client.onConnectionLost = this.onConnectionLost;
@@ -168,6 +196,9 @@ class HomePage extends Component {
     console.log('Connect Failed')
     console.log(err)
     this.setState({ status: 'failed' })
+    setTimeout(()=>{
+      this.setState({status:''});
+    },3000)
   }
 
   onMessageArrived = (message) => {
@@ -302,6 +333,25 @@ class HomePage extends Component {
   }
 
 
+  sendToTopic = async(topic) => {
+    //  let val;
+    //  if(msg === true){
+    //   val = "1";
+    //  } else if (msg === false){
+    //   val = "2";
+    //  } else {
+    //    val = msg;
+    //  }
+     let msg1 = new Paho.Message("1");
+     msg1.destinationName = await topic;
+     try {
+       await this.client.send(msg1);
+     } catch (e) {
+       console.log(e);
+     }
+     console.log("test");
+  }
+
 
   handleStatusBackgroundColor = () => {
     switch(this.state.status){
@@ -311,9 +361,22 @@ class HomePage extends Component {
       case "Connected" :
         return "#4EB755";
       break; 
-      case "failed" :
+      case "failed" :   
         return "#9E0F0F";
     }
+  }
+
+  handleSwitchToggle = (switchName) => {
+    this.setState((prevState) => ({
+      isSwitchesOn: {
+        ...prevState.isSwitchesOn,
+        [switchName]: !prevState.isSwitchesOn[switchName],
+      },
+    }));
+  };
+
+  handleMiddlewareToFirstPage = () => {
+    this.client == null || this.state.status == 'failed' ? this.props.navigation.navigate('Settings','homes') : this.props.navigation.navigate('FirstSetUp')
   }
 
   render() {
@@ -323,12 +386,15 @@ class HomePage extends Component {
     console.log(`lat:${this.state.latitude}`)
     console.log(`long:${this.state.longitude}`)
 
+   
+   
+
     //mapping value dari async
     let arrayDataValue = []
     let configData = []
     let mqttConfigs = []
   
-    console.log(this.state.data)
+    // console.log(this.state.data)
     // console.log(this.state.username_mqtt)
     // console.log(this.state.password_mqtt)
     // console.log(this.state.mqttPort)
@@ -340,7 +406,8 @@ class HomePage extends Component {
     // console.log(this.state.longitude);
     console.log(`mqttURL: ${this.state.mqttUrl}`);
     console.log(`status: ${this.state.status}`)
-
+    console.log(`refreshing: ${this.state.refreshing}`);
+  
 
     if (this.state.data == null) {
       return
@@ -357,8 +424,9 @@ class HomePage extends Component {
         }
       })
     }
-
-
+ 
+     
+   console.log(arrayDataValue)
 
     if (arrayDataValue[0] == null || !arrayDataValue) {
       return (
@@ -381,7 +449,7 @@ class HomePage extends Component {
             <AntDesign name="inbox" size={100} color="#8C8C8E" />
             <Text style={styles.boxNullDesc}>No Device Yet</Text>
             <Text style={styles.deviceNull}>Tidak Ada Device Yang Terhubung</Text>
-            <TouchableOpacity onPress={() => this.client == null || this.state.status == 'failed' ? this.props.navigation.navigate('Settings', { openModal: true }) : this.props.navigation.navigate('FirstSetUp')}>
+          <TouchableOpacity onPress={this.handleMiddlewareToFirstPage}>
               <LinearGradient
                 colors={["#2380bf", "#239ffb", "#55cfdb"]}
                 style={styles.btnDevice}
@@ -441,7 +509,7 @@ class HomePage extends Component {
                     case 1:
                       return (
                         <Grid key={index}>
-                          <CostumButton1 btnTitle={data[4]} key={index} onPress={this.btnAc}>
+                          <CostumButton1 btnTitle={data[4]} key={index} onPress={()=>sendToTopic(data[2])}>
                           </CostumButton1>
                         </Grid>
 
@@ -450,7 +518,7 @@ class HomePage extends Component {
                     case 2:
                       return (
                         <Grid key={index}>
-                          <CostumButton2 w={120} h={50} btnTitle={data[4]} key={index} onPress={this.btnAc}>
+                          <CostumButton2 w={120} h={50} btnTitle={data[4]} key={index} onPress={()=>this.sendToTopic.bind(this.data[2])}>
                           </CostumButton2>
                         </Grid>
                       )
@@ -458,7 +526,7 @@ class HomePage extends Component {
                     case 3:
                       return (
                         <Grid key={index}>
-                          <CostumButton3 key={index} onPress={this.btnAc}>
+                          <CostumButton3 key={index} onPress={this.sendToTopic.bind(data[2])}>
                           </CostumButton3>
                         </Grid>
                       )
@@ -481,8 +549,8 @@ class HomePage extends Component {
                               key={index}
                               color="#239ffb"
                               style={styles.switch}
-                              value={this.state.isSwitchOn[index]}
-                              onValueChange={()=>this.handleSwitchToggle(index)}
+                              value={this.state.isSwitchesOn.switch1}
+                              onValueChange={()=>this.handleSwitchToggle('switch1')}
                             />
                             </View>                            
                           </View>
@@ -502,10 +570,10 @@ class HomePage extends Component {
             </LinearGradient>
           </TouchableOpacity>
           
-          {/* {
+           
             <Button title="ac" onPress={this.btnAc}>
             </Button>
-          } */}
+    
 
         </View>
 
@@ -520,7 +588,9 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#eee',
-    padding: 20,
+    paddingTop: 20,
+    paddingBottom: 100,
+    paddingHorizontal:20,
   },
   title: {
     fontFamily: 'Jakarta',
@@ -602,6 +672,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     flexWrap: 'wrap',
     marginTop: 15,
+    paddingBottom:50,
   },
   switch: {
     position: 'absolute',
