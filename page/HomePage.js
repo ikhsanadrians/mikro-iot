@@ -57,15 +57,16 @@ class HomePage extends Component {
       cityName: '',
       latitude: '',
       mqttPort: null,
-      isSwitchOn: false ,
-      isSwitchesOn: {switch1:false,switch2:false,switch3:false},
+      isSwitchOn: false,
+      isSwitchesOn: { switch1: false, switch2: false, switch3: false },
       mqttPath: '',
       mqttId: 'id_' + parseInt(Math.random() * 100000),
       isLoadingVisible: false,
-      runningRefresh:false,
+      runningRefresh: false,
     }
     this.client = null;
     this.handleSwitchToggle = this.handleSwitchToggle.bind(this)
+    this.sendToTopic = this.sendToTopic.bind(this)
 
   }
 
@@ -103,7 +104,7 @@ class HomePage extends Component {
     this.clientConnect();
     this.getLocation();
   }
-   
+
 
   // componentDidUpdate(prevProps){
   //   if (prevProps.route.params != this.props.route.params ) {
@@ -116,14 +117,14 @@ class HomePage extends Component {
   //   }
   //   console.log(prevProps.route.params);
   // } 
-  
+
 
   refreshFromFirstPage = () => {
-    if(this.props.route.params == 'first'){
-        this.onRefresh();
+    if (this.props.route.params == 'first') {
+      this.onRefresh();
+    }
   }
-}
-  
+
   clientConnect = async () => {
     try {
       if (await this.state.mqttUrl != '') {
@@ -170,7 +171,7 @@ class HomePage extends Component {
           this.setState({ weatherType: data.weather[0].main })
           this.setState({ cityName: data.name });
         } catch {
-          console.log('wait');
+          console.log('wait to weather');
         }
       })
       .catch(error => console.log(error))
@@ -183,7 +184,7 @@ class HomePage extends Component {
       this.client.subscribe('Cikunir/lt2/suhu2/sharp')
       this.setState({ status: 'Connected' });
       setTimeout(() => {
-        this.setState({status:''});
+        this.setState({ status: '' });
       }, 5000);
     } catch {
       console.log('Failed To Connection!')
@@ -194,9 +195,9 @@ class HomePage extends Component {
     console.log('Connect Failed')
     console.log(err)
     this.setState({ status: 'failed' })
-    setTimeout(()=>{
-      this.setState({status:''});
-    },3000)
+    setTimeout(() => {
+      this.setState({ status: '' });
+    }, 3000)
   }
 
   onMessageArrived = (message) => {
@@ -211,7 +212,7 @@ class HomePage extends Component {
 
   connect = async () => {
     try {
-      this.setState({isLoadingVisible:true})
+      this.setState({ isLoadingVisible: true })
       this.setState({ status: 'IsFetching' },
         async () => {
           this.client.connect({
@@ -294,13 +295,13 @@ class HomePage extends Component {
         console.log("wait")
       })
   }
-  
+
   handleSwitchToggle(index) {
     const newSwitches = [...this.state.isSwitchOn];
     newSwitches[index] = !newSwitches[index];
     this.setState({ switches: newSwitches });
   }
-   
+
   btnAc = () => {
     let btnState = this.state.isClicked;
     if (btnState == false) {
@@ -318,20 +319,20 @@ class HomePage extends Component {
   }
 
   handleStatusConnect = () => {
-     switch(this.state.status){
-         case "IsFetching" :
-           return "Connecting ...";
-         break;
-         case "Connected" :
-           return "Connected";
-         break; 
-         case "failed" :
-           return "Failed Connect To Server";
-    } 
+    switch (this.state.status) {
+      case "IsFetching":
+        return "Connecting ...";
+        break;
+      case "Connected":
+        return "Connected";
+        break;
+      case "failed":
+        return "Failed Connect To Server";
+    }
   }
 
 
-  sendToTopic = async(topic) => {
+  sendToTopic = async (topic) => {
     //  let val;
     //  if(msg === true){
     //   val = "1";
@@ -340,26 +341,26 @@ class HomePage extends Component {
     //  } else {
     //    val = msg;
     //  }
-     let msg1 = new Paho.Message("1");
-     msg1.destinationName = await topic;
-     try {
-       await this.client.send(msg1);
-     } catch (e) {
-       console.log(e);
-     }
-     console.log("test");
+    let msg1 = new Paho.Message("1");
+    msg1.destinationName = await topic;
+    try {
+      await this.client.send(msg1);
+    } catch (e) {
+      console.log(e);
+    }
+    console.log("test");
   }
 
 
   handleStatusBackgroundColor = () => {
-    switch(this.state.status){
-      case "IsFetching" :
-        return "#239ffb"; 
-      break;
-      case "Connected" :
+    switch (this.state.status) {
+      case "IsFetching":
+        return "#239ffb";
+        break;
+      case "Connected":
         return "#4EB755";
-      break; 
-      case "failed" :   
+        break;
+      case "failed":
         return "#9E0F0F";
     }
   }
@@ -374,8 +375,12 @@ class HomePage extends Component {
   };
 
   handleMiddlewareToFirstPage = () => {
-    this.client == null || this.state.status == 'failed' ? this.props.navigation.navigate('Settings','homes') : this.props.navigation.navigate('FirstSetUp')
+    this.client == null || this.state.status == 'failed' ? this.props.navigation.navigate('Settings', 'homes') : this.props.navigation.navigate('FirstSetUp')
   }
+
+  test = (Name) => [
+    console.log(`Hello ${Name}`)
+  ]
 
   render() {
     //parameter dari page sebelumnya
@@ -384,14 +389,14 @@ class HomePage extends Component {
     console.log(`lat:${this.state.latitude}`)
     console.log(`long:${this.state.longitude}`)
 
-   
-   
+
+
 
     //mapping value dari async
     let arrayDataValue = []
     let configData = []
     let mqttConfigs = []
-  
+
     // console.log(this.state.data)
     // console.log(this.state.username_mqtt)
     // console.log(this.state.password_mqtt)
@@ -405,11 +410,9 @@ class HomePage extends Component {
     console.log(`mqttURL: ${this.state.mqttUrl}`);
     console.log(`status: ${this.state.status}`)
     console.log(`refreshing: ${this.state.refreshing}`);
-  
 
-    if (this.state.data == null) {
-      return
-    } else {
+
+    if (this.state.data != null) {
       this.state.data.map((data, index) => {
         let ParsedValue = JSON.parse(data.value)
         if (data.key == "mqttConfig") {
@@ -422,13 +425,15 @@ class HomePage extends Component {
         }
       })
     }
- 
-     
-   console.log(arrayDataValue)
 
-    if (arrayDataValue[0] == null || !arrayDataValue) {
-      return (
-        <ScrollView style={styles.container}
+
+    console.log(arrayDataValue)
+
+
+    return (
+      <View style={{ flex: 1 }}>
+        <ScrollView
+          style={styles.container}
           refreshControl={
             <RefreshControl
               refreshing={this.state.refreshing}
@@ -439,145 +444,120 @@ class HomePage extends Component {
           onMomentumScrollBegin={() => this.setState({ refreshing: false })}
           onMomentumScrollEnd={() => this.setState({ refreshing: false })}
         >
-        <Loading loading={this.state.status === 'IsFetching' ? true : false} icon={this.state.status} titleLoad={this.handleStatusConnect()} bg={this.handleStatusBackgroundColor()} visible={this.state.isLoadingVisible}></Loading>
-          <View style={styles.welcomes}>
-          </View>
-          <Text style={styles.title}></Text>
-          <View style={styles.boxNull}>
-            <AntDesign name="inbox" size={100} color="#8C8C8E" />
-            <Text style={styles.boxNullDesc}>No Device Yet</Text>
-            <Text style={styles.deviceNull}>Tidak Ada Device Yang Terhubung</Text>
-          <TouchableOpacity onPress={this.handleMiddlewareToFirstPage}>
-              <LinearGradient
-                colors={["#2380bf", "#239ffb", "#55cfdb"]}
-                style={styles.btnDevice}
-              >
-                <AntDesign name="plus" size={20} color="white" />
-                <Text style={styles.buttonText}>Add New Devices</Text>
-              </LinearGradient>
-            </TouchableOpacity>
-            <TouchableOpacity onPress={this.clearAllData} style={styles.btnDevelop}>
-              <AntDesign name='setting' size={20} color="white"></AntDesign>
-              <Text style={styles.btnDeviceTitle}>Developer Mode</Text>
-            </TouchableOpacity>
-            <TouchableOpacity onPress={this.runConnect} style={styles.btnDevelop}>
-              <AntDesign name='setting' size={20} color="white"></AntDesign>
-              <Text style={styles.btnDeviceTitle}>Run</Text>
-            </TouchableOpacity>
-          </View>
-        </ScrollView>
-      )
-    } else {
-      return (
-        <View style={{ flex: 1 }}>
-          <ScrollView style={styles.container}
-            refreshControl={
-              <RefreshControl
-                refreshing={this.state.refreshing}
-                onRefresh={this.onRefresh}
-              />
-            }
-            onScrollBeginDrag={() => this.setState({ refreshing: false })}
-            onMomentumScrollBegin={() => this.setState({ refreshing: false })}
-            onMomentumScrollEnd={() => this.setState({ refreshing: false })}
-          >
-            <View style={styles.greet}>
-              <View style={styles.greetUserContainer}>
-               <Text style={styles.greetTitle}>
-                 Welcome Back,
-               </Text>
-               <Text style={styles.greetUserName}>
-                 {configData}
-               </Text>
-              </View>
-              <View style={styles.greetProfilePic}>
-                <View style={styles.profilePicInner}>
-                  <Image source={ProfilePic} style={styles.profilePicture}>
-                  </Image>
+          {arrayDataValue.length >= 1 ?
+            <View style={{ flex: 1 }}>
+              <View style={styles.greet}>
+                <View style={styles.greetUserContainer}>
+                  <Text style={styles.greetTitle}>
+                    Welcome Back,
+                  </Text>
+                  <Text style={styles.greetUserName}>
+                    {configData}
+                  </Text>
+                </View>
+                <View style={styles.greetProfilePic}>
+                  <View style={styles.profilePicInner}>
+                    <Image source={ProfilePic} style={styles.profilePicture}>
+                    </Image>
+                  </View>
                 </View>
               </View>
-            </View>
-            <Weather temp={this.state.temp} weatherType={this.state.weatherType} cityName={this.state.cityName}>
-
-            </Weather>
-            <View style={styles.buttonGrid}>
-              {
-                arrayDataValue.map((data, index) => {
-                  switch (data[1]) {
-                    case 1:
-                      return (
+              <Weather temp={this.state.temp} weatherType={this.state.weatherType} cityName={this.state.cityName}>
+              </Weather>
+              <View style={styles.buttonGrid}>
+                {arrayDataValue.map((data, index) => {
+                  return (
+                    <View key={index}>
+                      {data[1] == 1 &&
                         <Grid key={index}>
-                          <CostumButton1 btnTitle={data[4]} key={index} onPress={()=>sendToTopic(data[2])}>
+                          <CostumButton1 btnTitle={data[4]} key={index} onPress={this.sendToTopic.bind(data[2])}>
                           </CostumButton1>
                         </Grid>
 
-                      )
-                      break;
-                    case 2:
-                      return (
+                      }
+                      {data[1] == 2 &&
                         <Grid key={index}>
-                          <CostumButton2 w={120} h={50} btnTitle={data[4]} key={index} onPress={()=>this.sendToTopic.bind(this.data[2])}>
+                          <CostumButton2 w={120} h={50} btnTitle={data[4]} key={index} onPress={() => this.test.bind(index)}>
                           </CostumButton2>
                         </Grid>
-                      )
-                      break;
-                    case 3:
-                      return (
+
+                      }
+                      {data[1] == 3 &&
                         <Grid key={index}>
                           <CostumButton3 key={index} onPress={this.sendToTopic.bind(data[2])}>
                           </CostumButton3>
                         </Grid>
-                      )
-                      break;
-                    case 4:
-                      return (
-                        <Grid key={index}>
-                          <View style={styles.switchContainer}>
-                            <View style={styles.switchInnerTop}>
-                            <MaterialCommunityIcons name='floor-lamp' size={30} color="#239ffb"></MaterialCommunityIcons>             
-                            </View>
-                            <View style={styles.switchInnerBottom}>
-                            <Text style={styles.switchInnerTitle}> 
+                      }
+                      {
+                        data[1] == 4 &&
+                        <View style={styles.switchContainer}>
+                          <View style={styles.switchInnerTop}>
+                            <MaterialCommunityIcons name='floor-lamp' size={30} color="#239ffb"></MaterialCommunityIcons>
+                          </View>
+                          <View style={styles.switchInnerBottom}>
+                            <Text style={styles.switchInnerTitle}>
                               {data[4]}
                             </Text>
                             <Text style={styles.switchInnerCondition}>
-                                ON
+                              ON
                             </Text>
-                            <Switch 
+                            <Switch
                               key={index}
                               color="#239ffb"
                               style={styles.switch}
                               value={this.state.isSwitchesOn.switch1}
-                              onValueChange={()=>this.handleSwitchToggle('switch1')}
+                              onValueChange={() => this.handleSwitchToggle('switch1')}
                             />
-                            </View>                            
                           </View>
-                        </Grid>
-                      )
-                  }
-                })
-              }
-              <Text>
-              </Text>
-
+                        </View>
+                      }
+                    </View>
+                  )
+                })}
+              </View>
             </View>
-          </ScrollView>
-          <TouchableOpacity onPress={() => this.props.navigation.navigate('FirstSetUp')} style={styles.addNewBtn}>
-            <LinearGradient colors={["#2380bf", "#239ffb", "#55cfdb"]} style={styles.addNewBtnGradient}>
-              <Entypo name="plus" size={24} color="white" />
-            </LinearGradient>
-          </TouchableOpacity>
-          
-           
-            <Button title="ac" onPress={this.btnAc}>
-            </Button>
-    
+            :
+            <View style={styles.welcomes}>
+              <Loading loading={this.state.status === 'IsFetching' ? true : false} icon={this.state.status} titleLoad={this.handleStatusConnect()} bg={this.handleStatusBackgroundColor()} visible={this.state.isLoadingVisible}></Loading>
+              <Text style={styles.title}></Text>
+              <View style={styles.boxNull}>
+                <AntDesign name="inbox" size={100} color="#8C8C8E" />
+                <Text style={styles.boxNullDesc}>No Device Yet</Text>
+                <Text style={styles.deviceNull}>Tidak Ada Device Yang Terhubung</Text>
+                <TouchableOpacity onPress={this.handleMiddlewareToFirstPage}>
+                  <LinearGradient
+                    colors={["#2380bf", "#239ffb", "#55cfdb"]}
+                    style={styles.btnDevice}
+                  >
+                    <AntDesign name="plus" size={20} color="white" />
+                    <Text style={styles.buttonText}>Add New Devices</Text>
+                  </LinearGradient>
+                </TouchableOpacity>
+                <TouchableOpacity onPress={this.clearAllData} style={styles.btnDevelop}>
+                  <AntDesign name='setting' size={20} color="white"></AntDesign>
+                  <Text style={styles.btnDeviceTitle}>Developer Mode</Text>
+                </TouchableOpacity>
+                <TouchableOpacity onPress={this.runConnect} style={styles.btnDevelop}>
+                  <AntDesign name='setting' size={20} color="white"></AntDesign>
+                  <Text style={styles.btnDeviceTitle}>Run</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          }
 
-        </View>
+        </ScrollView>
+
+        <TouchableOpacity onPress={() => this.props.navigation.navigate('FirstSetUp')} style={styles.addNewBtn}>
+          <LinearGradient colors={["#2380bf", "#239ffb", "#55cfdb"]} style={styles.addNewBtnGradient}>
+            <Entypo name="plus" size={24} color="white" />
+          </LinearGradient>
+        </TouchableOpacity>
+      </View>
 
 
-      )
-    }
+    )
+
+
   }
 }
 
@@ -588,7 +568,8 @@ const styles = StyleSheet.create({
     backgroundColor: '#eee',
     paddingTop: 20,
     paddingBottom: 100,
-    paddingHorizontal:20,
+    height: '100%',
+    paddingHorizontal: 20,
   },
   title: {
     fontFamily: 'Jakarta',
@@ -646,9 +627,9 @@ const styles = StyleSheet.create({
   },
   greet: {
     marginVertical: 10,
-    flexDirection:'row',
-    justifyContent:'space-between',
-    alignItems:'center'
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center'
   },
   greetTitle: {
     fontFamily: 'Inter',
@@ -670,7 +651,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     flexWrap: 'wrap',
     marginTop: 15,
-    paddingBottom:50,
+    paddingBottom: 50,
   },
   switch: {
     position: 'absolute',
@@ -678,38 +659,38 @@ const styles = StyleSheet.create({
     right: 5,
   },
   switchContainer: {
-    flex:1,
+    flex: 1,
   },
   switchInnerBottom: {
-     padding:5,
-     flex:3,
+    padding: 5,
+    flex: 3,
   },
   switchInnerTop: {
-     flex:4,
-     padding:5,
+    flex: 4,
+    padding: 5,
   },
   switchInnerTitle: {
-    fontFamily:'InterSemi',
+    fontFamily: 'InterSemi',
   },
   switchInnerCondition: {
     fontFamily: 'Inter',
-    color:'#239ffb',
+    color: '#239ffb',
   },
   // greetUserContainer:{
-  
+
   // },
   // greetProfilePic: {
-  
+
   // },
   profilePicInner: {
-    width:45,
-    height:45,
-    overflow:'hidden',
-    borderRadius:15,
+    width: 45,
+    height: 45,
+    overflow: 'hidden',
+    borderRadius: 15,
   },
   profilePicture: {
-    width:45,
-    height:45,
+    width: 45,
+    height: 45,
   }
 });
 
