@@ -88,7 +88,7 @@ setToObj = () => {
 
    render() {
     return (
-      <View style={styles.containers}>
+      <ScrollView style={styles.containers}>
         <TouchableOpacity onPress={() => this.props.navigation.navigate("Homepage")}>
           <AntDesign name="arrowleft" size={24} color="black"
            style={{
@@ -116,10 +116,15 @@ setToObj = () => {
         <TextInput
            onChangeText={(val)=>this.setState({titleBtn:val})}
            style={[styles.templateInputName,{marginTop:10}]} placeholder="Masukan Title Button"></TextInput>
-                <TextInput
-           onChangeText={(val)=>this.setState({titleBtn:val})}
-           style={[styles.templateInputName,{marginTop:10}]} placeholder="Masukan Message"></TextInput>
-
+           <View>
+              <TextInput
+              onChangeText={(val)=>this.setState({titleBtn:val})}
+              style={[styles.MessageInputName,{marginTop:10}]} placeholder="Masukan Message"></TextInput>
+              <TextInput
+              onChangeText={(val)=>this.setState({titleBtn:val})}
+              style={[styles.MessageInputName,{marginTop:10}]} placeholder="Masukan Message"></TextInput>  
+           </View>     
+           
           <Text style={styles.hintTypeBtn}>Pilih Jenis Button</Text>
           <ScrollView horizontal={true} style={styles.btnOption}>
              <TouchableOpacity onPress={() => this.selectButtonType(1)} style={[styles.grid,{
@@ -157,7 +162,7 @@ setToObj = () => {
             </LinearGradient>
           </TouchableOpacity>
         </View>
-      </View>
+      </ScrollView>
       )
     }
   }
@@ -221,7 +226,17 @@ setToObj = () => {
       justifyContent:"center",
       alignContent:'center',
       borderRadius:5,
-    }
+    },
+     MessageInputName: {
+      borderWidth: 0.8,
+      width: "100%",
+      padding: 10,
+      fontFamily: "Jakarta",
+      backgroundColor:'white',
+      borderRadius: 10,
+      borderColor: "#ddd",
+      marginBottom: 10,
+    },
   });
 
   export default FirstStep;

@@ -345,10 +345,9 @@ class HomePage extends Component {
     msg1.destinationName = await topic;
     try {
       await this.client.send(msg1);
-    } catch (e) {
-      console.log(e);
+    } catch{
+      await this.clientConnect();
     }
-    console.log("test");
   }
 
 
@@ -378,9 +377,9 @@ class HomePage extends Component {
     this.client == null || this.state.status == 'failed' ? this.props.navigation.navigate('Settings', 'homes') : this.props.navigation.navigate('FirstSetUp')
   }
 
-  test = (Name) => [
-    console.log(`Hello ${Name}`)
-  ]
+  test = (name) => {
+    console.log(`Hello ${name}`)
+  }
 
   render() {
     //parameter dari page sebelumnya
@@ -470,14 +469,14 @@ class HomePage extends Component {
                     <View key={index}>
                       {data[1] == 1 &&
                         <Grid key={index}>
-                          <CostumButton1 title='test' btnTitle={data[4]} key={index} onPress={this.test.bind(data[2])}>
+                          <CostumButton1 title='test' btnTitle={data[4]} key={index} onPress={()=>this.test(data[2])}>
                           </CostumButton1>
                         </Grid>
 
                       }
                       {data[1] == 2 &&
                         <Grid key={index}>
-                          <CostumButton2 w={120} h={50} btnTitle={data[4]} key={index} onPress={() => this.test.bind(index)}>
+                          <CostumButton2 w={120} h={50} btnTitle={data[4]} key={index} onPress={()=>this.sendToTopic(data[2])}>
                           </CostumButton2>
                         </Grid>
 
